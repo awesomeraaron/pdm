@@ -7,6 +7,7 @@ import graphene
 from graphene import relay
 from graphene_sqlalchemy import SQLAlchemyConnectionField, SQLAlchemyObjectType
 
+
 class Fitment(SQLAlchemyObjectType):
     class Meta:
         model = FitmentModel
@@ -24,10 +25,12 @@ class Part(SQLAlchemyObjectType):
         model = PartModel
         interfaces = (relay.Node,)
 
+
 class Image(SQLAlchemyObjectType):
     class Meta:
         model = ImageModel
         interfaces = (relay.Node,)
+
 
 # class OtherMetaData(SQLAlchemyObjectType):
 #     class Meta:
@@ -39,32 +42,32 @@ class Image(SQLAlchemyObjectType):
 #         model = ShipmentPackagingModel
 #         interfaces = (relay.Node,)
 
+
 class ImageMutation(graphene.Mutation):
     class Arguments:
         image_uri = graphene.String(required=True)
-    
+
     image = graphene.Field(lambda: Image)
 
     def mutate(self, info, image_uri):
         image = ImageModel(image_uri=image_uri)
-        
 
         # add to DB
         from sqlalchemy.orm import scoped_session, sessionmaker
         from sqlalchemy import create_engine
 
         engine = create_engine("sqlite:///database.sqlite3", convert_unicode=True)
-        db_session = scoped_session(
-            sessionmaker(bind=engine)
-        )
+        db_session = scoped_session(sessionmaker(bind=engine))
 
         db_session.add(image)
         db_session.commit()
 
-        return ImageMutation() 
+        return ImageMutation()
+
 
 class Mutation(graphene.ObjectType):
     mutate_image = ImageMutation.Field()
+
 
 class Query(graphene.ObjectType):
     node = relay.Node.Field()
@@ -74,7 +77,8 @@ class Query(graphene.ObjectType):
     all_fitments = SQLAlchemyConnectionField(Fitment.connection)
 
     all_sku = SQLAlchemyConnectionField(SKU.connection)
-    
+
     all_images = SQLAlchemyConnectionField(Image.connection)
+
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

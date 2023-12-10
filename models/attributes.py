@@ -1,7 +1,7 @@
 from sqlalchemy import *
 from database import Base
-from sqlalchemy.orm import relationship
 import enum
+
 
 class ColorEnum(enum.Enum):
     RED = 1
@@ -16,8 +16,7 @@ class SizeEnum(enum.Enum):
 
 class Attribute(Base):
     __tablename__ = "attribute"
-    
-    id  = Column(Integer, primary_key=True)
+
+    id = Column(Integer, primary_key=True)
     color = Column(Enum(ColorEnum))
     size = Column(Enum(SizeEnum))
-    

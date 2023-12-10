@@ -24,8 +24,6 @@ if __name__ == "__main__":
     app.run()
 
 
-
-
 # get all fitments
 """
 {
